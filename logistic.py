@@ -1,26 +1,32 @@
 import numpy as np
 from sklearn import linear_model
+from sklearn.externals import joblib
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import classification_report
 import time
 import sys
 
-def loadXy(filename_train):
-    Xy = np.loadtxt(filename_train, dtype='int', delimiter=',')
-    y = Xy[:,0]
-    X = Xy[:,1:]
-    #print(X)
-    #print(y)
-    return X, y
+def loadX(filename_train_X):
+    X = np.loadtxt(filename_train_X, dtype='int', delimiter=',')
+    return X
 
-def train(filename_coef, X, y):
+def loady(filename_train_y):
+    y = np.loadtxt(filename_train_y, dtype='int', delimiter=',')
+    return y
+
+def train(filename_model, X, y):
     start = time.time()
     print(start)
 
-    clf = linear_model.LogisticRegression(C=0.01)
+    clf = linear_model.LogisticRegression(C=0.01, class_weight='balanced')
     clf.fit(X, y)
+
     print(clf.coef_)
-    np.savetxt(filename_coef, clf.coef_, delimiter=',')
+    print(clf.intercept_)
+    #np.savetxt(filename_coef, clf.coef_, delimiter=',')
+    #np.savetxt(filename_intercept, clf.intercept_, delimiter=',')
+
+    joblib.dump(clf, filename_model)
 
     y_pred = clf.predict(X)
     print(mean_squared_error(y, y_pred))
@@ -35,13 +41,14 @@ def train(filename_coef, X, y):
     print('training time :', str(end-start))
 
 def main():
-    filename_train = sys.argv[1]
-    filename_coef = sys.argv[2]
+    filename_train_X = sys.argv[1]
+    filename_train_y = sys.argv[2]
+    filename_model = sys.argv[3]
 
-    X, y = loadXy(filename_train)
-    #train(filename_train, filename_coef, alpha, n_samples, n_features)
+    X = loadX(filename_train_X)
+    y = loady(filename_train_y)
 
-    train(filename_coef, X, y)
+    train(filename_model, X, y)
 
 if __name__ == '__main__':
     main()

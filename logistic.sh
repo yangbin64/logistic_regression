@@ -1,4 +1,6 @@
 #!/bin/sh
 
-python logistic.py ../20_input/train_Xy.csv coef_Xy.csv
+SEP=6.0
+
+python logistic.py ../20_input/train_X.csv ../20_input/train_y_bin_${SEP}.csv logistic_${SEP}.pkl
 
