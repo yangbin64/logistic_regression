@@ -7,19 +7,19 @@ import time
 import sys
 
 def loadX(filename_train_X):
-    X = np.loadtxt(filename_train_X, dtype='int', delimiter=',')
-    return X
+    train_X = np.loadtxt(filename_train_X, dtype='int', delimiter=',')
+    return train_X
 
 def loady(filename_train_y):
-    y = np.loadtxt(filename_train_y, dtype='int', delimiter=',')
-    return y
+    train_y = np.loadtxt(filename_train_y, dtype='int', delimiter=',')
+    return train_y
 
-def train(filename_model, X, y):
+def train(filename_model, train_X, train_y, filename_train_y_predict):
     start = time.time()
     print(start)
 
     clf = linear_model.LogisticRegression(C=0.01, class_weight='balanced')
-    clf.fit(X, y)
+    clf.fit(train_X, train_y)
 
     print(clf.coef_)
     print(clf.intercept_)
@@ -28,12 +28,11 @@ def train(filename_model, X, y):
 
     joblib.dump(clf, filename_model)
 
-    y_pred = clf.predict(X)
-    print(mean_squared_error(y, y_pred))
-    print(classification_report(y, y_pred))
+    train_y_predict = clf.predict(train_X)
+    print(mean_squared_error(train_y, train_y_predict))
+    print(classification_report(train_y, train_y_predict))
 
-    np.savetxt('y.txt', y, delimiter=',')
-    np.savetxt('y_pred.txt', y_pred, delimiter=',')
+    np.savetxt(filename_train_y_predict, train_y_predict, delimiter=',', fmt="%.0f")
 
     end = time.time()
     print(end)
@@ -44,11 +43,12 @@ def main():
     filename_train_X = sys.argv[1]
     filename_train_y = sys.argv[2]
     filename_model = sys.argv[3]
+    filename_train_y_predict = sys.argv[4]
 
-    X = loadX(filename_train_X)
-    y = loady(filename_train_y)
+    train_X = loadX(filename_train_X)
+    train_y = loady(filename_train_y)
 
-    train(filename_model, X, y)
+    train(filename_model, train_X, train_y, filename_train_y_predict)
 
 if __name__ == '__main__':
     main()

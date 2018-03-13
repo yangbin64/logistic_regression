@@ -1,8 +1,6 @@
-import numpy as np
-from sklearn import linear_model
+from sklearn.linear_model import Ridge
 from sklearn.externals import joblib
 from sklearn.metrics import mean_squared_error
-from sklearn.metrics import classification_report
 import time
 import sys
 
@@ -20,9 +18,8 @@ def predict(filename_test_X, filename_test_y, filename_model, filename_test_y_pr
     array_y_predict = clf.predict(array_X)
 
     print(mean_squared_error(array_y, array_y_predict))
-    print(classification_report(array_y, array_y_predict))
 
-    np.savetxt(filename_test_y_predict, array_y_predict, delimiter=',', fmt="%.0f")
+    np.savetxt(filename_test_y_predict, array_y_predict, delimiter=',')
 
     end = time.time()
     print(end)
